@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GoldPTC – Watch & Earn</title>
+<link rel="icon" href="data:,">
+<style>
+:root{--navy:#0a1630;--navy2:#101f42;--navy3:#18294f;--line:#243a68;--gold:#e8b84a;--gold2:#f6d57a;--text:#e9eefc;--muted:#93a3c7;--ok:#4cd39a;--bad:#ff7a7a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+[hidden]{display:none!important}
+body{margin:0;background:var(--navy);color:var(--text);font:16px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;margin:0 0 .4em;letter-spacing:.2px}
+button,input,select{font:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.btn{background:linear-gradient(180deg,var(--gold2),var(--gold));color:#1a1303;border:0;border-radius:10px;padding:.7em 1.3em;font-weight:700;cursor:pointer;transition:transform .15s,opacity .15s}
+.btn:hover{opacity:.92;transform:translateY(-1px)}
+.btn:disabled{background:var(--navy3);color:var(--muted);cursor:not-allowed;transform:none}
+.btn.ghost{background:transparent;color:var(--gold);border:1px solid var(--gold)}
+.btn.sm{padding:.45em .95em;font-size:.88rem}
+.btn.ok{background:var(--ok);color:#04291b}
+.btn.bad{background:var(--bad);color:#3a0710}
+.app{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+aside{background:var(--navy2);border-right:1px solid var(--line);padding:20px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:6px}
+.logo{font:700 1.4rem Georgia,serif;color:var(--gold);padding:0 10px 14px;display:flex;align-items:center;gap:10px}
+.logo::before{content:"৳";width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(145deg,var(--gold2),#c8921f);color:#1a1303;font:700 1.2rem Georgia,serif;box-shadow:0 6px 18px rgba(232,184,74,.25)}
+.nav{position:relative;display:flex;align-items:center;gap:12px;padding:.78em 14px;border-radius:12px;font-weight:600;color:var(--muted);background:none;border:0;text-align:left;cursor:pointer;width:100%;transition:background .2s,color .2s;text-decoration:none}
+.nav svg{width:20px;height:20px;flex:none}
+.nav:hover{background:rgba(255,255,255,.06);color:var(--text)}
+.nav.active{background:linear-gradient(90deg,rgba(232,184,74,.22),rgba(232,184,74,.04));color:var(--gold2);box-shadow:inset 3px 0 var(--gold)}
+.nav.out:hover{color:var(--bad);background:rgba(255,122,138,.08)}
+.spacer{flex:1}
+main{padding:24px;max-width:1000px;width:100%}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.chip{background:linear-gradient(160deg,#1b3068,#13244d);border:1px solid var(--line);border-radius:99px;padding:.3em .9em;color:var(--gold)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.card{position:relative;overflow:hidden;background:linear-gradient(160deg,#13244d,#0d1a3a);border:1px solid var(--line);border-radius:18px;padding:22px}
+.stat b{display:block;font:700 2.2rem Georgia,serif;color:var(--gold)}
+.stat span{color:var(--muted);font-size:.9rem}
+.bal{border-color:var(--gold)}
+.sec{display:none}.sec.active{display:block}
+.ref{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.ref input{flex:1;min-width:160px}
+input,select{background:var(--navy);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:.75em .9em;width:100%;height:44px}
+.ads{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin-top:14px}
+.ad{display:flex;flex-direction:column;gap:8px}
+.ad .thumb{height:90px;border-radius:8px;background:linear-gradient(135deg,#1b3068,#2f4a8f);display:grid;place-items:center;font:700 1.1rem Georgia,serif;color:var(--gold2)}
+.ad small{color:var(--muted)}
+.bar{height:8px;background:var(--navy);border-radius:9px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width 1s linear}
+.vids{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.player{aspect-ratio:16/9;width:100%;border:0;border-radius:8px;background:#000}
+.vid h3{display:flex;justify-content:space-between;gap:8px;font-size:1.05rem}
+.tag{font:600 .75rem system-ui;background:var(--navy3);border-radius:6px;padding:.2em .6em;color:var(--gold)}
+.row{display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap}
+.row .bar{flex:1;min-width:80px}
+label{display:block;margin:12px 0 4px;color:var(--muted);font-size:.9rem}
+table{width:100%;border-collapse:collapse;margin-top:8px}
+th,td{text-align:left;padding:.65em .4em;border-bottom:1px solid var(--line);font-size:.92rem}
+th{color:var(--muted);font-weight:600}
+.wrap{overflow-x:auto}
+.msg{margin-top:10px;min-height:1.3em;font-size:.92rem}.msg.ok{color:var(--ok)}.msg.bad{color:var(--bad)}
+.hero{position:relative;display:grid;place-items:center;min-height:100vh;text-align:center;padding:24px;background:radial-gradient(900px 500px at 85% -10%,#1b3270 0,transparent 60%),radial-gradient(700px 400px at -10% 110%,#2a2150 0,transparent 55%),var(--navy)}
+.hero h1{font-size:clamp(2.2rem,7vw,3.6rem);margin:0 auto .3em}
+.hero p{color:var(--muted);max-width:44ch;margin:0 auto 22px}
+.hero .btn{padding:.8em 1.6em;margin:6px}
+
+/* Floating Side Admin Box on Landing Page */
+.admin-side-box{
+  position:fixed;
+  top:50%;
+  right:0;
+  transform:translateY(-50%);
+  background:linear-gradient(160deg,#1b3068,#0d1a3a);
+  border:1px solid var(--gold);
+  border-right:0;
+  border-radius:16px 0 0 16px;
+  padding:14px 16px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  text-decoration:none;
+  color:var(--gold2);
+  font-weight:700;
+  font-size:.85rem;
+  box-shadow:-6px 8px 24px rgba(0,0,0,0.5);
+  z-index:25;
+  transition:padding-right .2s, background .2s;
+}
+.admin-side-box:hover{
+  padding-right:24px;
+  background:linear-gradient(160deg,#254085,#13244d);
+  color:#fff;
+}
+.admin-side-box svg{
+  width:24px;
+  height:24px;
+  color:var(--gold);
+}
+
+/* Enhanced Auth Modal Styles */
+dialog{background:linear-gradient(160deg,#13244d,#0d1a3a);color:var(--text);border:1px solid var(--gold);border-radius:20px;padding:30px;width:min(420px,94vw);box-shadow:0 20px 40px rgba(0,0,0,0.6)}
+dialog::backdrop{background:rgba(3,8,20,0.8);backdrop-filter:blur(5px)}
+.tabs{display:flex;gap:8px;margin-bottom:20px;background:var(--navy);padding:4px;border-radius:12px;border:1px solid var(--line)}
+.tabs button{flex:1;background:transparent;border:0;color:var(--muted);padding:.7em;border-radius:9px;cursor:pointer;font-weight:600;transition:.2s}
+.tabs button.on{background:var(--gold);color:#1a1303;box-shadow:0 4px 12px rgba(232,184,74,0.3)}
+
+.toast{position:fixed;right:16px;bottom:16px;background:var(--gold);color:#1a1303;font-weight:700;padding:.8em 1.2em;border-radius:12px;opacity:0;transform:translateY(10px);transition:.25s;pointer-events:none;z-index:30;box-shadow:0 5px 15px rgba(0,0,0,0.3)}
+.toast.show{opacity:1;transform:none}
+
+/* Admin Styles */
+.adm{max-width:1240px;margin:0 auto;padding:24px 18px 48px}
+.ah{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap}
+.ah h2{font-size:1.7rem;margin:0}.ah p{margin:0;color:var(--muted)}
+.ag{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.ag .wide{grid-column:1/-1}
+.an{font:700 clamp(2.2rem,5vw,3rem)/1 Georgia,serif;color:var(--c)}
+.al{color:var(--muted);margin-top:6px}
+.seg{display:flex;height:12px;border-radius:99px;overflow:hidden;background:rgba(255,255,255,.07);margin:16px 0 12px}
+.seg i{display:block;height:100%;transition:width .8s}
+.lg{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:.9rem}
+.lg span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--d);margin-right:7px}
+.aitem{display:grid;grid-template-columns:1.3fr 1fr 1.3fr auto auto;gap:12px;align-items:center;background:#0d1a3a;border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin-bottom:10px}
+.aitem small{display:block;color:var(--muted)}
+.aitem .amt{font:700 1.15rem Georgia,serif;color:var(--gold)}
+.acts{display:flex;gap:8px}
+.aempty{color:var(--muted);text-align:center;padding:26px;border:1px dashed var(--line);border-radius:14px}
+.pb{background:var(--gold);color:#1a1303;border-radius:99px;font:700 .8rem system-ui;padding:.1em .65em;margin-left:auto}
+.alogin{display:grid;place-items:center;min-height:80vh}.alogin .card{width:min(400px,100%);padding:30px;border-color:var(--gold)}
+#aMain{display:grid;grid-template-columns:240px 1fr;gap:24px;align-items:start}
+.acont{min-width:0}
+.asd{position:sticky;top:24px;display:flex;flex-direction:column;gap:6px;height:calc(100vh - 48px);min-height:460px;background:rgba(13,26,58,.88);border:1px solid var(--line);border-radius:18px;padding:18px 14px}
+.menu{display:none}.mout{display:none}
+
+@media(max-width:760px){
+.app{grid-template-columns:1fr}
+aside,.asd{position:fixed;inset:auto 0 0 0;width:100%;height:auto;min-height:0;transform:none;flex-direction:row;justify-content:space-around;gap:0;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));border:0;border-top:1px solid var(--line);border-radius:0;background:rgba(8,18,42,.96);backdrop-filter:blur(10px);z-index:20}
+aside .logo,aside .prof,aside .spacer,aside .nav.out,.asd .logo,.asd .prof,.asd .spacer{display:none}
+.nav{flex:1;flex-direction:column;justify-content:center;gap:2px;width:auto;padding:.5em .3em;font-size:.70rem;border-radius:10px}
+.nav.active{box-shadow:none;background:rgba(232,184,74,.16)}
+.nav .pb{position:absolute;top:1px;right:14%;margin:0;padding:0 .45em;font-size:.68rem}
+.menu{display:inline-block}.mout{display:inline-block}
+main{padding-bottom:96px}
+.adm{padding-bottom:96px}
+#aMain{grid-template-columns:1fr}
+.admin-side-box{padding:10px 12px;font-size:.78rem}
+}
+</style>
+</head>
+<body>
+
+<div class="hero" id="landing">
+  <!-- Side Box for Admin Panel -->
+  <a href="#admin" class="admin-side-box" title="Open Admin Panel">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    <span>Admin<br>Panel</span>
+  </a>
+
+  <div>
+    <div class="logo" style="justify-content:center;padding:0 0 18px">GoldPTC</div>
+    <h1>Watch. Click. Get paid.</h1>
+    <p>Earn money by watching ads and videos. Cash out via bKash or Nagad starting from 250 BDT.</p>
+    <button class="btn" onclick="openAuth('register')">Create free account</button>
+    <button class="btn ghost" onclick="openAuth('login')">Log in</button>
+  </div>
+</div>
+
+<div class="app" id="app" hidden>
+  <aside id="side">
+    <div class="logo">GoldPTC</div>
+    <div class="prof" style="display:flex;align-items:center;gap:12px;background:linear-gradient(160deg,#1b3068,#13244d);border:1px solid var(--line);border-radius:14px;padding:12px;margin:2px 0 14px">
+      <div class="av" id="sAv" style="width:40px;height:40px;border-radius:50%;display:grid;place-items:center;flex:none;background:linear-gradient(145deg,var(--gold2),#c8921f);color:#1a1303;font:700 1.1rem Georgia,serif">G</div>
+      <div style="overflow:hidden"><b id="sName" style="display:block;line-height:1.2;text-overflow:ellipsis;white-space:nowrap">User</b><small id="sBalMini" style="color:var(--gold)">৳0.00</small></div>
+    </div>
+    <button class="nav active" data-s="dash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg><span>Dashboard</span></button>
+    <button class="nav" data-s="ads"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l6.5 16 2.3-6.7L19.5 11z"/></svg><span>Watch Ads</span></button>
+    <button class="nav" data-s="videos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m10.5 9.5 4 2.5-4 2.5z"/></svg><span>Videos</span></button>
+    <button class="nav" data-s="withdraw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18M16 14.5h2"/></svg><span>Withdraw</span></button>
+    <a class="nav" href="#admin" style="margin-top:8px;border:1px solid rgba(232,184,74,.3)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>Admin Box</span></a>
+    <div class="spacer"></div>
+    <button class="nav out" id="logout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4H5.5A1.5 1.5 0 0 0 4 5.5v13A1.5 1.5 0 0 0 5.5 20H9M15 8l4 4-4 4M19 12H9"/></svg><span>Log out</span></button>
+  </aside>
+  <main>
+    <div class="top">
+      <div><button class="btn ghost menu" id="menu" aria-label="Menu">Menu</button>
+        <h2 id="hello" style="display:inline-block;margin-left:6px">Dashboard</h2></div>
+      <div style="display:flex;gap:8px;align-items:center"><span class="chip" id="chipBal">৳0.00</span><button class="btn ghost sm mout" id="logout2">Log out</button></div>
+    </div>
+
+    <section class="sec active" id="dash">
+      <div class="grid">
+        <div class="card stat bal"><span>Current balance</span><b id="sBal">৳0.00</b></div>
+        <div class="card stat"><span>Total earned</span><b id="sTot">৳0.00</b></div>
+        <div class="card stat"><span>Completed tasks</span><b id="sTasks">0</b></div>
+      </div>
+      <div class="card" style="margin-top:14px">
+        <h3>Your referral link</h3>
+        <span style="color:var(--muted)">Invite friends using your link. You will get 50 BDT bonus when they make their first 250 BDT withdrawal!</span>
+        <div class="ref"><input id="refLink" readonly><button class="btn" id="copyRef">Copy link</button></div>
+      </div>
+      <div class="card" style="margin-top:14px">
+        <h3>Recent activity</h3>
+        <div class="wrap"><table><thead><tr><th>Time</th><th>Activity</th><th>Amount</th></tr></thead><tbody id="hist"></tbody></table></div>
+      </div>
+    </section>
+
+    <section class="sec" id="ads">
+      <div class="card">
+        <h3>Watch ads & earn</h3>
+        <span style="color:var(--muted)">Open an ad, wait for the required timer, and earn money.</span>
+        <div class="ads" id="adList"></div>
+      </div>
+    </section>
+
+    <section class="sec" id="videos">
+      <div class="vids" id="vidList"></div>
+      <p style="color:var(--muted);font-size:.85rem;margin-top:12px">Watch videos fully to claim rewards.</p>
+    </section>
+
+    <section class="sec" id="withdraw">
+      <div class="card" style="max-width:520px">
+        <h3>Request a payout</h3>
+        <span style="color:var(--muted)">Minimum withdrawal: 250 BDT</span>
+        <div class="bar" style="margin-top:12px"><i id="wBar" style="transition:none"></i></div>
+        <small id="wNote" style="color:var(--muted)"></small>
+        <label for="wm">Payment Method</label>
+        <select id="wm">
+          <option value="bKash">bKash</option>
+          <option value="Nagad">Nagad</option>
+        </select>
+        <label for="wa" id="waL">bKash number</label>
+        <input id="wa" placeholder="01XXXXXXXXX">
+        <label for="wamt">Amount (BDT)</label>
+        <input id="wamt" type="number" min="250" step="1" placeholder="250">
+        <div class="row" style="margin-top:16px"><button class="btn" id="wgo">Request Withdrawal</button></div>
+        <div class="msg" id="wmsg" role="status"></div>
+      </div>
+      <div class="card" style="margin-top:14px">
+        <h3>Withdrawal History</h3>
+        <div class="wrap"><table><thead><tr><th>Date</th><th>Method</th><th>Amount</th><th>Status</th></tr></thead><tbody id="wHist"></tbody></table></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Admin Panel Section -->
+<div class="adm" id="adminv" hidden>
+  <div class="alogin" id="aLogin"><div class="card">
+    <div class="logo" style="justify-content:center;padding:0 0 10px">Admin Access</div>
+    <p style="color:var(--muted);font-size:.88rem;text-align:center;margin-bottom:14px">Sign in with authorized admin email and password.</p>
+    
+    <label for="ale">Admin Email</label>
+    <input id="ale" type="email" placeholder="Enter admin email">
+    
+    <label for="alp">Admin Password</label>
+    <input id="alp" type="password" placeholder="Enter password">
+    
+    <div class="msg bad" id="alm" role="alert"></div>
+    <button class="btn" id="alg" style="width:100%;margin-top:12px">Sign in to Panel</button>
+    
+    <p style="color:var(--muted);font-size:.8rem;margin:14px 0 0;text-align:center"><a href="#home" style="color:var(--gold);display:inline-block;margin-top:6px">← Back to Website</a></p>
+  </div></div>
+
+  <div id="aMain" hidden>
+    <nav class="asd">
+      <div class="logo">GoldPTC</div>
+      <div class="prof" style="display:flex;align-items:center;gap:12px;background:linear-gradient(160deg,#1b3068,#13244d);border:1px solid var(--line);border-radius:14px;padding:12px;margin:2px 0 14px">
+        <div class="av" style="width:40px;height:40px;border-radius:50%;display:grid;place-items:center;flex:none;background:linear-gradient(145deg,var(--gold2),#c8921f);color:#1a1303;font:700 1.1rem Georgia,serif">A</div>
+        <div style="overflow:hidden"><b style="display:block;line-height:1.2">Admin</b><small id="loggedAdminEmail" style="color:var(--gold);font-size:.75rem;display:block;text-overflow:ellipsis;overflow:hidden">Control Panel</small></div>
+      </div>
+      <button class="nav active" id="n1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg><span>Overview</span></button>
+      <button class="nav" id="n2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Withdrawals</span><em class="pb" id="apc2">0</em></button>
+      <button class="nav" id="n3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l6.5 16 2.3-6.7L19.5 11z"/></svg><span>Ads & Videos</span></button>
+      <button class="nav" id="n4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Admin Settings</span></button>
+      <a class="nav" href="#home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.7 3 2.7 15 0 18M12 3c-2.7 3-2.7 15 0 18"/></svg><span>Website</span></a>
+      <div class="spacer"></div>
+      <button class="nav out" id="alo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4H5.5A1.5 1.5 0 0 0 4 5.5v13A1.5 1.5 0 0 0 5.5 20H9M15 8l4 4-4 4M19 12H9"/></svg><span>Sign out</span></button>
+    </nav>
+    <div class="acont">
+      <div class="ah"><div><h2>Admin Dashboard</h2><p>Manage user withdrawals, tasks, and admin credentials.</p></div></div>
+      
+      <!-- Overview Tab -->
+      <div id="tabOverview">
+        <div class="ag">
+          <div class="card u" style="--c:var(--gold);--glow:var(--gold)"><div class="an" id="a1">0</div><div class="al">Total users</div></div>
+          <div class="card" style="--c:var(--ok);--glow:var(--ok)"><div class="an" id="a2">0</div><div class="al">Approved withdrawals</div></div>
+          <div class="card" style="--c:var(--bad);--glow:var(--bad)"><div class="an" id="a3">0</div><div class="al">Rejected withdrawals</div></div>
+          <div class="card wide" style="--c:#9db8ff;--glow:#5b7cff">
+            <div class="an" id="a4">0</div><div class="al">Total withdrawal requests</div>
+            <div class="seg" aria-hidden="true"><i id="sA" style="background:var(--ok)"></i><i id="sR" style="background:var(--bad)"></i><i id="sP" style="background:var(--gold)"></i></div>
+            <div class="lg"><span style="--d:var(--ok)">Approved <b id="aA">0</b></span><span style="--d:var(--bad)">Rejected <b id="aR">0</b></span><span style="--d:var(--gold)">Pending <b id="aP">0</b></span></div>
+          </div>
+        </div>
+        <h3 id="ph" style="margin:30px 0 12px">Pending Requests <span class="pb" id="apc">0</span></h3>
+        <div id="apl"></div>
+      </div>
+
+      <!-- Manage Tasks Tab -->
+      <div id="tabTasks" style="display:none">
+        <div class="card" style="margin-bottom:20px">
+          <h3>Add New Ad</h3>
+          <div class="row">
+            <input id="newAdTitle" placeholder="Ad Title (e.g., Crypto Promo)" style="flex:2">
+            <input id="newAdCat" placeholder="Category (e.g., Finance)" style="flex:1">
+            <input id="newAdReward" type="number" step="0.5" placeholder="Reward in BDT (e.g., 2.40)" value="2.40" style="flex:1">
+            <button class="btn" id="btnAddAd">Add Ad</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Active Ads List</h3>
+          <div id="adminAdList" style="margin-top:12px"></div>
+        </div>
+
+        <div class="card" style="margin-top:20px">
+          <h3>Add New Video Task</h3>
+          <div style="display:grid;gap:10px;margin-top:10px">
+            <input id="newVidTitle" placeholder="Video Title (e.g., YouTube Review)">
+            <input id="newVidSrc" placeholder="Embed URL (e.g., https://www.youtube.com/embed/...)">
+            <input id="newVidReward" type="number" step="0.5" placeholder="Reward in BDT (e.g., 3.60)" value="3.60">
+            <button class="btn" id="btnAddVid">Add Video</button>
+          </div>
+        </div>
+        <div class="card" style="margin-top:20px">
+          <h3>Active Videos List</h3>
+          <div id="adminVidList" style="margin-top:12px"></div>
+        </div>
+      </div>
+
+      <!-- Admin Credentials & Security Tab -->
+      <div id="tabSettings" style="display:none">
+        <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">
+          
+          <!-- Change Current Admin Credentials -->
+          <div class="card">
+            <h3>Change Current Admin Email & Password</h3>
+            <p style="color:var(--muted);font-size:.88rem;margin-bottom:14px">Update login credentials for your active session.</p>
+            <label for="updAdmEmail">New Admin Email</label>
+            <input id="updAdmEmail" type="email" placeholder="newadmin@goldptc.com">
+            <label for="updAdmPass">New Admin Password</label>
+            <input id="updAdmPass" type="password" placeholder="Minimum 6 characters">
+            <div class="msg" id="updAdmMsg"></div>
+            <button class="btn" id="btnUpdateAdmin" style="margin-top:14px;width:100%">Update Credentials</button>
+          </div>
+
+          <!-- Add New Admin Account -->
+          <div class="card">
+            <h3>Add New Admin Account</h3>
+            <p style="color:var(--muted);font-size:.88rem;margin-bottom:14px">Grant another administrator access to this panel.</p>
+            <label for="addAdmEmail">Admin Email</label>
+            <input id="addAdmEmail" type="email" placeholder="co-admin@goldptc.com">
+            <label for="addAdmPass">Admin Password</label>
+            <input id="addAdmPass" type="password" placeholder="Minimum 6 characters">
+            <div class="msg" id="addAdmMsg"></div>
+            <button class="btn ghost" id="btnAddNewAdmin" style="margin-top:14px;width:100%">Add Admin</button>
+          </div>
+
+        </div>
+
+        <!-- Authorized Admins List -->
+        <div class="card" style="margin-top:20px">
+          <h3>Authorized Admin Accounts</h3>
+          <div id="adminAccountsList" style="margin-top:12px"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<dialog id="auth">
+  <div class="tabs"><button id="tL" class="on">Log in</button><button id="tR">Register</button></div>
+  <form id="af" method="dialog" onsubmit="return false">
+    <div id="nameRow" style="display:none"><label for="an">Full Name</label><input id="an" autocomplete="username" placeholder="Enter your full name"></div>
+    <label for="ae">Email Address</label><input id="ae" type="email" autocomplete="email" placeholder="name@example.com">
+    <label for="ap">Password</label><input id="ap" type="password" autocomplete="current-password" placeholder="••••••••">
+    
+    <!-- Referral Code Input on Register moved to the very bottom -->
+    <div id="refCodeRow" style="display:none">
+      <label for="regRef">Referral Code (Optional)</label>
+      <input id="regRef" placeholder="e.g. Abc123">
+    </div>
+
+    <div class="msg bad" id="aMsg" role="alert"></div>
+    <div class="row" style="margin-top:20px"><button class="btn" id="aGo" type="button" style="flex:1">Continue</button><button class="btn ghost" type="button" id="aX">Cancel</button></div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const MIN_WD=250;
+
+let db={
+ users:{},
+ admins:[
+  {email:"mrruhulamin100@gmail.com",pass:"100mrruhul admin"}
+ ],
+ ads:[
+  {title:"Crypto Wallet Pro",cat:"Finance",reward:2.40,time:15},
+  {title:"Fast Fashion Sale",cat:"Shopping",reward:2.40,time:15},
+  {title:"Learn English Online",cat:"Education",reward:2.40,time:15},
+  {title:"Mobile Recharge Deals",cat:"Telecom",reward:2.40,time:15}
+ ],
+ videos:[
+  {id:"v1",t:"YouTube: Product Review",p:"YouTube",src:"https://www.youtube.com/embed/dQw4w9WgXcQ",r:3.60},
+  {id:"v2",t:"YouTube: Tech Tips",p:"YouTube",src:"https://www.youtube.com/embed/jNQXAC9IVRw",r:3.60},
+  {id:"v3",t:"Facebook: Brand Video",p:"Facebook",src:"https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Ffacebook%2Fvideos%2F10153231379946729%2F&show_text=false",r:4.80}
+ ]
+};
+
+let user=null,timers={};
+const save=()=>{try{localStorage.setItem("goldptc_bdt_v7",JSON.stringify(db))}catch(e){}};
+try{
+ const d=localStorage.getItem("goldptc_bdt_v7");
+ if(d){
+  const parsed=JSON.parse(d);
+  db=Object.assign(db,parsed);
+  if(!db.admins||!db.admins.length)db.admins=[{email:"mrruhulamin100@gmail.com",pass:"100mrruhul admin"}];
+ } else {
+  db.admins=[{email:"mrruhulamin100@gmail.com",pass:"100mrruhul admin"}];
+ }
+}catch(e){}
+try{const s=sessionStorage.getItem("goldptc_u");if(s&&db.users[s])user=s}catch(e){}
+
+const U=()=>db.users[user];
+const money=n=>"৳"+(+n).toFixed(2);
+function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove("show"),2200)}
+function log(txt,amt){U().hist.unshift({t:new Date().toLocaleString(),txt,amt});U().hist=U().hist.slice(0,30)}
+function earn(amt,txt){const u=U();u.bal=+(u.bal+amt).toFixed(2);u.tot=+(u.tot+amt).toFixed(2);u.tasks++;log(txt,amt);save();render();toast("+"+money(amt)+" added to balance")}
+
+/* Check URL query param for ref on load */
+window.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const refCode = urlParams.get('ref');
+  if(refCode && !user) {
+    openAuth('register');
+    setTimeout(() => {
+      const refInput = $("#regRef");
+      if(refInput) refInput.value = refCode;
+    }, 100);
+  }
+});
+
+/* Auth modal control */
+let mode="login";
+function openAuth(m){
+  mode=m;
+  $("#nameRow").style.display=m==="register"?"block":"none";
+  $("#refCodeRow").style.display=m==="register"?"block":"none";
+  $("#tL").classList.toggle("on",m==="login");
+  $("#tR").classList.toggle("on",m==="register");
+  $("#aMsg").textContent="";
+  $("#auth").showModal();
+}
+window.openAuth=openAuth;
+$("#tL").onclick=()=>openAuth("login");
+$("#tR").onclick=()=>openAuth("register");
+$("#aX").onclick=()=>$("#auth").close();
+
+$("#aGo").onclick=()=>{
+ const e=$("#ae").value.trim().toLowerCase(),p=$("#ap").value,n=$("#an").value.trim(),m=$("#aMsg");
+ const refCodeInput=$("#regRef")?$("#regRef").value.trim().toLowerCase():"";
+
+ if(!/^\S+@\S+\.\S+$/.test(e)){m.textContent="Please enter a valid email address.";return}
+ if(p.length<6){m.textContent="Password must be at least 6 characters.";return}
+ if(mode==="register"){
+  if(n.length<3){m.textContent="Username must be at least 3 characters.";return}
+  if(db.users[e]){m.textContent="This email is already registered. Please log in.";return}
+  
+  // Generate unique code based on name or username
+  const generatedCode=n.toLowerCase().replace(/\W/g,"")+Math.floor(Math.random()*900+100);
+
+  // Check if referred by someone valid
+  let referrerEmail = null;
+  if(refCodeInput) {
+    for(let [uEmail, uData] of Object.entries(db.users)) {
+      if(uData.code === refCodeInput) {
+        referrerEmail = uEmail;
+        break;
+      }
+    }
+  }
+
+  db.users[e]={
+    name:n,
+    pw:btoa(p),
+    bal:0,
+    tot:0,
+    tasks:0,
+    hist:[],
+    wd:[],
+    code:generatedCode,
+    referredBy: referrerEmail,
+    hasWithdrawnFirst: false,
+    bonusPaidToReferrer: false
+  };
+  save();
+ }else if(!db.users[e]||db.users[e].pw!==btoa(p)){m.textContent="Incorrect email or password.";return}
+ user=e;try{sessionStorage.setItem("goldptc_u",e)}catch(x){}
+ $("#auth").close();show();
+};
+$("#logout").onclick=()=>{user=null;try{sessionStorage.removeItem("goldptc_u")}catch(e){}Object.values(timers).forEach(clearInterval);timers={};show()};
+
+/* Navigation */
+function go(s){
+ $$(".sec").forEach(x=>x.classList.toggle("active",x.id===s));
+ $$(".nav[data-s]").forEach(x=>x.classList.toggle("active",x.dataset.s===s));
+ $("#hello").textContent={dash:"Dashboard",ads:"Watch Ads",videos:"Watch Videos",withdraw:"Withdraw"}[s];
+ $("#side").classList.remove("open");
+}
+$$(".nav[data-s]").forEach(b=>b.onclick=()=>go(b.dataset.s));
+$("#menu").onclick=()=>$("#side").classList.toggle("open");
+
+/* Render user dashboard */
+function render(){
+ const u=U();if(!u)return;
+ $("#sName").textContent=u.name;$("#sAv").textContent=(u.name||"G")[0].toUpperCase();
+ $("#sBalMini").textContent=money(u.bal);$("#sBal").textContent=$("#chipBal").textContent=money(u.bal);
+ $("#sTot").textContent=money(u.tot);$("#sTasks").textContent=u.tasks;
+ 
+ // Website name with code format: website.com?ref=code
+ const cleanBaseUrl = window.location.origin + window.location.pathname;
+ $("#refLink").value = cleanBaseUrl + "?ref=" + u.code;
+ 
+ $("#hist").innerHTML=u.hist.length?u.hist.map(h=>`<tr><td>${h.t}</td><td>${h.txt}</td><td style="color:${h.amt>=0?"var(--ok)":"var(--bad)"}">${h.amt>=0?"+":"−"}${money(Math.abs(h.amt))}</td></tr>`).join(""):`<tr><td colspan="3" style="color:var(--muted)">No activity yet. Complete tasks to start earning.</td></tr>`;
+ $("#wHist").innerHTML=u.wd.length?u.wd.map(w=>`<tr><td>${w.t}</td><td>${w.m}</td><td>${money(w.a)}</td><td><span class="tag">${w.s}</span></td></tr>`).join(""):`<tr><td colspan="4" style="color:var(--muted)">No withdrawal records.</td></tr>`;
+ 
+ const pct=Math.min(100,u.bal/MIN_WD*100);$("#wBar").style.width=pct+"%";
+ $("#wNote").textContent=u.bal>=MIN_WD?"You are eligible to withdraw!":"You need "+money(MIN_WD-u.bal)+" more to withdraw.";
+ $("#wamt").max=u.bal;
+ buildAds();
+ buildVids();
+}
+function show(){const on=!!user;$("#landing").hidden=on;$("#app").hidden=!on;if(on){render();go("dash")}}
+
+/* Dynamic Timer for Visible Window Only */
+function visibleOnly(key,secs,onTick,onDone){
+ if(timers[key])return;let left=secs;onTick(left,secs);
+ timers[key]=setInterval(()=>{if(document.hidden)return;left--;onTick(left,secs);if(left<=0){clearInterval(timers[key]);delete timers[key];onDone()}},1000)}
+
+/* Render dynamic ads managed by admin */
+function buildAds(){
+ const list=$("#adList");
+ if(!list)return;
+ list.innerHTML=db.ads.map((a,i)=>`<div class="card ad"><div class="thumb">${a.title}</div><small>${a.cat} · ${a.time}s · ${money(a.reward)}</small>
+ <div class="bar"><i id="ab${i}"></i></div><button class="btn" id="aB${i}">View Ad</button></div>`).join("");
+ db.ads.forEach((a,i)=>{
+  $("#aB"+i).onclick=()=>{
+   const btn=$("#aB"+i),bar=$("#ab"+i);
+   if(timers["ad"+i]||Object.keys(timers).some(k=>k.startsWith("ad")))return toast("Finish active task first!");
+   btn.disabled=true;
+   visibleOnly("ad"+i,a.time,(l,t)=>{btn.textContent="Watching… "+l+"s";bar.style.width=(t-l)/t*100+"%"},()=>{
+    btn.textContent="View Ad";btn.disabled=false;bar.style.width="0";earn(a.reward,"Viewed ad: "+a.title)});
+  };
+ });
+}
+
+/* Render dynamic videos managed by admin */
+function buildVids(){
+ const list=$("#vidList");
+ if(!list)return;
+ list.innerHTML=db.videos.map(v=>`<div class="card vid"><h3>${v.t}<span class="tag">${money(v.r)}</span></h3>
+ <iframe class="player" src="about:blank" data-src="${v.src}" title="${v.t}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+ <div class="row"><button class="btn ghost" id="vS-${v.id}">Start Timer</button><div class="bar"><i id="vb-${v.id}"></i></div><span id="vt-${v.id}" style="min-width:3ch">30s</span></div>
+ <div class="row"><button class="btn" id="vC-${v.id}" disabled>Claim Reward</button></div></div>`).join("");
+ db.videos.forEach(v=>{
+  const S=$("#vS-"+v.id),C=$("#vC-"+v.id);
+  if(!S)return;
+  S.onclick=()=>{
+   const f=S.closest(".vid").querySelector("iframe");if(f.src==="about:blank"||!f.src.includes("http"))f.src=v.src;
+   S.disabled=true;
+   visibleOnly("v"+v.id,30,(l,t)=>{$("#vt-"+v.id).textContent=l+"s";$("#vb-"+v.id).style.width=(t-l)/t*100+"%"},()=>{C.disabled=false;S.textContent="Done"});
+  };
+  C.onclick=()=>{C.disabled=true;earn(v.r,"Watched video: "+v.t);S.disabled=false;S.textContent="Watch Again";$("#vb-"+v.id).style.width="0";$("#vt-"+v.id).textContent="30s"};
+ });
+}
+
+/* Referral link copying */
+$("#copyRef").onclick=()=>{const i=$("#refLink");i.select();try{navigator.clipboard.writeText(i.value)}catch(e){document.execCommand("copy")}toast("Referral link copied")};
+
+/* Withdraw functionality */
+const L={bKash:["bKash number","01XXXXXXXXX"],Nagad:["Nagad number","01XXXXXXXXX"]};
+$("#wm").onchange=()=>{const l=L[$("#wm").value];$("#waL").textContent=l[0];$("#wa").placeholder=l[1]};
+$("#wgo").onclick=()=>{
+ const u=U(),m=$("#wm").value,a=$("#wa").value.trim(),amt=+$("#wamt").value,g=$("#wmsg");
+ const bad=t=>{g.className="msg bad";g.textContent=t};
+ if(u.bal<MIN_WD)return bad("Minimum withdrawal is 250 BDT. Current balance: "+money(u.bal));
+ if(!/^01[3-9]\d{8}$/.test(a))return bad("Enter a valid 11-digit "+m+" number (01XXXXXXXXX).");
+ if(!(amt>=MIN_WD))return bad("Minimum withdrawal amount is 250 BDT.");
+ if(amt>u.bal)return bad("Requested amount exceeds your balance.");
+ 
+ u.bal=+(u.bal-amt).toFixed(2);
+ u.wd.unshift({t:new Date().toLocaleDateString(),m,acc:a,a:amt,s:"Pending"});
+
+ // Check if this is their first withdrawal and if they were referred
+ if(!u.hasWithdrawnFirst && u.referredBy && db.users[u.referredBy]) {
+   u.hasWithdrawnFirst = true;
+   if(!u.bonusPaidToReferrer) {
+     u.bonusPaidToReferrer = true;
+     const referrer = db.users[u.referredBy];
+     referrer.bal = +(referrer.bal + 50).toFixed(2);
+     referrer.tot = +(referrer.tot + 50).toFixed(2);
+     referrer.hist.unshift({
+       t: new Date().toLocaleString(),
+       txt: "Referral bonus (50 BDT) from " + u.name,
+       amt: 50
+     });
+   }
+ }
+
+ log("Withdrawal via "+m,-amt);save();render();
+ g.className="msg ok";g.textContent="Withdrawal request submitted successfully! Under review within 24-48 hours.";$("#wamt").value="";
+};
+
+/* ===== ADMIN PANEL LOGIC ===== */
+const esc=x=>String(x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let admEmail=null;
+try{
+ const savedAdm=sessionStorage.getItem("gp_admin_email_v7");
+ if(savedAdm && db.admins.some(a=>a.email===savedAdm)) admEmail=savedAdm;
+}catch(e){}
+
+function adminShow(){
+ $("#adminv").hidden=false;
+ $("#aLogin").hidden=!!admEmail;
+ $("#aMain").hidden=!admEmail;
+ if(admEmail){
+  $("#loggedAdminEmail").textContent=admEmail;
+  $("#updAdmEmail").value=admEmail;
+  adminRender();
+ }
+}
+
+$("#alg").onclick=()=>{
+ const em=$("#ale").value.trim().toLowerCase();
+ const pw=$("#alp").value;
+ const found=db.admins.find(a=>a.email===em && a.pass===pw);
+ if(found){
+  admEmail=found.email;
+  try{sessionStorage.getItem("gp_admin_email_v7",admEmail)}catch(e){}
+  $("#alm").textContent="";
+  adminShow();
+ }else{
+  $("#alm").textContent="Incorrect admin email or password.";
+ }
+};
+$("#alp").onkeydown=e=>{if(e.key==="Enter")$("#alg").click()};
+$("#ale").onkeydown=e=>{if(e.key==="Enter")$("#alg").click()};
+
+$("#alo").onclick=()=>{
+ admEmail=null;
+ try{sessionStorage.removeItem("gp_admin_email_v7")}catch(e){}
+ $("#ale").value="";
+ $("#alp").value="";
+ adminShow();
+};
+
+function adminRender(){
+ const users=Object.entries(db.users),all=[];
+ users.forEach(([em,u])=>(u.wd||[]).forEach((r,i)=>all.push({em,u,r,i})));
+ const a=all.filter(x=>x.r.s==="Approved").length,r=all.filter(x=>x.r.s==="Rejected").length,p=all.filter(x=>x.r.s==="Pending"),t=all.length;
+ 
+ $("#a1").textContent=users.length;$("#a2").textContent=a;$("#a3").textContent=r;$("#a4").textContent=t;
+ $("#aA").textContent=a;$("#aR").textContent=r;$("#aP").textContent=p.length;$("#apc").textContent=$("#apc2").textContent=p.length;
+ [["sA",a],["sR",r],["sP",p.length]].forEach(([id,v])=>$("#"+id).style.width=(t?v/t*100:0)+"%");
+ 
+ $("#apl").innerHTML=p.length?p.map(x=>`<div class="aitem"><div><b>${esc(x.u.name)}</b><small>${esc(x.em)}</small></div><div>${esc(x.r.m)}<small>${esc(x.r.t)}</small></div><div style="overflow-wrap:anywhere">${esc(x.r.acc)}</div><div class="amt">${money(x.r.a)}</div><div class="acts"><button class="btn sm ok" data-a="app|${esc(x.em)}|${x.i}">Approve</button><button class="btn sm bad" data-a="rej|${esc(x.em)}|${x.i}">Reject</button></div></div>`).join(""):`<div class="aempty">No pending withdrawal requests.</div>`;
+
+ $("#adminAdList").innerHTML=db.ads.map((ad,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)"><span><b>${esc(ad.title)}</b> (${esc(ad.cat)}) - ${money(ad.reward)}</span><button class="btn sm bad" onclick="window.delAd(${i})">Delete</button></div>`).join("");
+ 
+ $("#adminVidList").innerHTML=db.videos.map((vid,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)"><span><b>${esc(vid.t)}</b> - ${money(vid.r)}</span><button class="btn sm bad" onclick="window.delVid(${i})">Delete</button></div>`).join("");
+
+ // Render Authorized Admin Accounts List
+ $("#adminAccountsList").innerHTML=db.admins.map((adm,i)=>`
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)">
+   <div>
+    <b>${esc(adm.email)}</b>
+    ${adm.email===admEmail?'<span class="tag" style="margin-left:8px">Current Session</span>':''}
+   </div>
+   ${db.admins.length>1 && adm.email!==admEmail ? `<button class="btn sm bad" onclick="window.delAdmin(${i})">Remove</button>` : '<small style="color:var(--muted)">Primary / Active</small>'}
+  </div>
+ `).join("");
+}
+
+window.delAd=i=>{db.ads.splice(i,1);save();adminRender();toast("Ad deleted")};
+window.delVid=i=>{db.videos.splice(i,1);save();adminRender();toast("Video deleted")};
+window.delAdmin=i=>{
+ if(db.admins.length<=1)return toast("Cannot delete the last admin");
+ db.admins.splice(i,1);
+ save();adminRender();toast("Admin account removed");
+};
+
+/* Update Current Admin Credentials */
+$("#btnUpdateAdmin").onclick=()=>{
+ const newEmail=$("#updAdmEmail").value.trim().toLowerCase();
+ const newPass=$("#updAdmPass").value;
+ const msg=$("#updAdmMsg");
+ if(!/^\S+@\S+\.\S+$/.test(newEmail)){msg.className="msg bad";msg.textContent="Enter a valid email address.";return;}
+ if(newPass && newPass.length<6){msg.className="msg bad";msg.textContent="Password must be at least 6 characters.";return;}
+ if(newEmail!==admEmail && db.admins.some(a=>a.email===newEmail)){msg.className="msg bad";msg.textContent="This email is already assigned to another admin.";return;}
+
+ const idx=db.admins.findIndex(a=>a.email===admEmail);
+ if(idx!==-1){
+  db.admins[idx].email=newEmail;
+  if(newPass)db.admins[idx].pass=newPass;
+  admEmail=newEmail;
+  try{sessionStorage.setItem("gp_admin_email_v7",admEmail)}catch(e){}
+  $("#loggedAdminEmail").textContent=admEmail;
+  $("#updAdmPass").value="";
+  save();adminRender();
+  msg.className="msg ok";msg.textContent="Admin credentials updated successfully!";
+  toast("Credentials updated");
+ }
+};
+
+/* Add New Admin Account */
+$("#btnAddNewAdmin").onclick=()=>{
+ const email=$("#addAdmEmail").value.trim().toLowerCase();
+ const pass=$("#addAdmPass").value;
+ const msg=$("#addAdmMsg");
+ if(!/^\S+@\S+\.\S+$/.test(email)){msg.className="msg bad";msg.textContent="Enter a valid email address.";return;}
+ if(pass.length<6){msg.className="msg bad";msg.textContent="Password must be at least 6 characters.";return;}
+ if(db.admins.some(a=>a.email===email)){msg.className="msg bad";msg.textContent="This admin email already exists.";return;}
+
+ db.admins.push({email,pass});
+ save();adminRender();
+ $("#addAdmEmail").value="";$("#addAdmPass").value="";
+ msg.className="msg ok";msg.textContent="New admin added successfully!";
+ toast("New admin added");
+};
+
+$("#btnAddAd").onclick=()=>{
+ const title=$("#newAdTitle").value.trim();
+ const cat=$("#newAdCat").value.trim();
+ const r=parseFloat($("#newAdReward").value)||2.40;
+ if(!title){toast("Enter ad title");return;}
+ db.ads.push({title,cat:cat||"General",reward:r,time:15});
+ save();adminRender();$("#newAdTitle").value="";$("#newAdCat").value="";toast("New ad added successfully!");
+};
+
+$("#btnAddVid").onclick=()=>{
+ const t=$("#newVidTitle").value.trim();
+ const src=$("#newVidSrc").value.trim();
+ const r=parseFloat($("#newVidReward").value)||3.60;
+ if(!t||!src){toast("Fill out video details");return;}
+ db.videos.push({id:"v_"+Date.now(),t,p:"YouTube",src,r});
+ save();adminRender();$("#newVidTitle").value="";$("#newVidSrc").value="";toast("New video added successfully!");
+};
+
+function switchAdminTab(tabId, navId){
+ ["n1","n2","n3","n4"].forEach(id=>$("#"+id).classList.toggle("active",id===navId));
+ $("#tabOverview").style.display=tabId==="tabOverview"?"block":"none";
+ $("#tabTasks").style.display=tabId==="tabTasks"?"block":"none";
+ $("#tabSettings").style.display=tabId==="tabSettings"?"block":"none";
+}
+
+$("#n1").onclick=()=>{ switchAdminTab("tabOverview","n1"); };
+$("#n2").onclick=()=>{ switchAdminTab("tabOverview","n2"); $("#ph").scrollIntoView({behavior:"smooth"}); };
+$("#n3").onclick=()=>{ switchAdminTab("tabTasks","n3"); };
+$("#n4").onclick=()=>{ switchAdminTab("tabSettings","n4"); };
+
+/* Withdraw approval actions */
+$("#aMain").onclick=e=>{
+ const b=e.target.closest("[data-a]");if(!b)return;
+ const [act,em,i]=b.dataset.a.split("|"),u=db.users[em],r=u&&u.wd[+i];if(!r||r.s!=="Pending")return;
+ if(b.dataset.armed!=="1"){b.dataset.armed="1";b.textContent="Confirm?";setTimeout(()=>{b.dataset.armed="";b.textContent=act==="rej"?"Reject":"Approve"},3000);return}
+ if(act==="rej"){r.s="Rejected";u.bal=+(u.bal+r.a).toFixed(2);(u.hist=u.hist||[]).unshift({t:new Date().toLocaleString(),txt:"Withdrawal rejected, funds refunded",amt:r.a})}else r.s="Approved";
+ save();adminRender();toast("Request "+r.s.toLowerCase());
+};
+
+function route(){
+ const on=location.hash==="#admin";
+ $("#adminv").hidden=!on;
+ if(on){$("#landing").hidden=true;$("#app").hidden=true;adminShow();}
+ else{show();}
+}
+addEventListener("hashchange",route);
+$("#logout2").onclick=()=>$("#logout").click();
+route();
+})();
+</script>
+</body>
+</html>
